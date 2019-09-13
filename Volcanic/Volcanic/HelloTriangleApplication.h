@@ -9,6 +9,7 @@ private:
 	GLFWwindow* window;
 	VkInstance instance;
 	VkDebugUtilsMessengerEXT debugMessenger;
+	VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
 
 	const int WIDTH = 800;
 	const int HEIGHT = 600;
@@ -37,6 +38,12 @@ private:
 	void initWindow();
 
 	void initVulkan();
+
+	void pickPhysicalDevice();
+
+	int rateDeviceSuitablity(VkPhysicalDevice device);
+
+	void populateDebugMessangerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
 
 	void setupDebugMessenger();
 
