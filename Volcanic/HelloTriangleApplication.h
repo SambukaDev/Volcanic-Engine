@@ -48,8 +48,6 @@ private:
 
 	int rateDeviceSuitablity(VkPhysicalDevice device);
 
-	QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
-
 	void populateDebugMessangerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
 
 	void setupDebugMessenger();
