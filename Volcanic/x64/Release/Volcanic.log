@@ -6,8 +6,8 @@ C:\Users\SambukaDev\Documents\GitKraken\Volcanic-Engine\Volcanic\Renderer.cpp(45
 C:\Users\SambukaDev\Documents\GitKraken\Volcanic-Engine\Volcanic\Renderer.cpp(163,62): warning C4267: '=': conversion from 'size_t' to 'uint32_t', possible loss of data
 C:\Users\SambukaDev\Documents\GitKraken\Volcanic-Engine\Volcanic\Renderer.cpp(165,70): warning C4267: '=': conversion from 'size_t' to 'uint32_t', possible loss of data
   Generating code
-  12 of 322 functions ( 3.7%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    0 functions had inline decision re-evaluated but remain unchanged
+  72 of 372 functions (19.4%) were compiled, the rest were copied from previous compilation.
+    17 functions were new in current compilation
+    10 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   Volcanic.vcxproj -> C:\Users\SambukaDev\Documents\GitKraken\Volcanic-Engine\x64\Release\Volcanic.exe
