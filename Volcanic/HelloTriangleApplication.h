@@ -10,6 +10,8 @@ private:
 	VkInstance instance;
 	VkDebugUtilsMessengerEXT debugMessenger;
 	VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
+	VkDevice device;
+	VkQueue graphicsQueue;
 
 	const int WIDTH = 800;
 	const int HEIGHT = 600;
@@ -47,6 +49,8 @@ private:
 	void pickPhysicalDevice();
 
 	int rateDeviceSuitablity(VkPhysicalDevice device);
+
+	void createLogicalDevice();
 
 	void populateDebugMessangerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
 
