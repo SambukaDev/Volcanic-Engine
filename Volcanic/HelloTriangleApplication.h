@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <vector>
 #include <optional>
+#include <string>
 
 class HelloTriangleApplication{
 
@@ -74,6 +75,12 @@ private:
 	void createImageViews();
 
 	bool checkDeviceExtensionSupport(VkPhysicalDevice device);
+
+	void  createGraphicsPipeline();
+
+	VkShaderModule createShaderModule(const std::vector<char>& code);
+
+	static std::vector<char> readFile(const std::string& filename);
 
 	static VkResult CreateDebugUtilsMessengerEXT(VkInstance, const VkDebugUtilsMessengerCreateInfoEXT*, const VkAllocationCallbacks*, VkDebugUtilsMessengerEXT*);
 
