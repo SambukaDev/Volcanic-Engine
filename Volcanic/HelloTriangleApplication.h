@@ -21,6 +21,7 @@ private:
 	VkFormat SwapChainImageFormat;
 	VkExtent2D swapChainExtent;
 	std::vector<VkImageView> swapChainImageViews;
+	VkPipelineLayout pipelineLayout;
 
 	const int WIDTH = 800;
 	const int HEIGHT = 600;
