@@ -21,7 +21,10 @@ private:
 	VkFormat SwapChainImageFormat;
 	VkExtent2D swapChainExtent;
 	std::vector<VkImageView> swapChainImageViews;
+	VkRenderPass renderPass;
 	VkPipelineLayout pipelineLayout;
+	VkPipeline graphicsPipeline;
+	VkCommandPool commandPool;
 
 	const int WIDTH = 800;
 	const int HEIGHT = 600;
@@ -35,6 +38,8 @@ private:
 
 	const std::vector<const char*> validationLayers = { "VK_LAYER_LUNARG_standard_validation" };
 	const std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+	std::vector<VkFramebuffer> swapChainFramebuffers;
+	std::vector<VkCommandBuffer> commandBuffers;
 
 public:
 	HelloTriangleApplication();
@@ -82,6 +87,14 @@ private:
 	VkShaderModule createShaderModule(const std::vector<char>& code);
 
 	static std::vector<char> readFile(const std::string& filename);
+
+	void createRenderPass();
+
+	void createFramebuffers();
+
+	void createCommandPool();
+
+	void createCommandBuffers();
 
 	static VkResult CreateDebugUtilsMessengerEXT(VkInstance, const VkDebugUtilsMessengerCreateInfoEXT*, const VkAllocationCallbacks*, VkDebugUtilsMessengerEXT*);
 
