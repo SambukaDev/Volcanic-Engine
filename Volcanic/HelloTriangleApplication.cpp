@@ -319,12 +319,24 @@ void HelloTriangleApplication::createRenderPass(){
 	subpass.pColorAttachments = &colorAttachmentRef;
 
 
+	VkSubpassDependency dependency{};
+	dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
+	dependency.dstSubpass = 0;
+	dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+	dependency.srcAccessMask = 0;
+	dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+	dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+
+
 	VkRenderPassCreateInfo renderPassInfo{};
 	renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
 	renderPassInfo.attachmentCount = 1;
 	renderPassInfo.pAttachments = &colorAttachment;
 	renderPassInfo.subpassCount = 1;
 	renderPassInfo.pSubpasses = &subpass;
+	renderPassInfo.dependencyCount = 1;
+	renderPassInfo.pDependencies = &dependency;
+
 
 	if (vkCreateRenderPass(device, &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS) {
 
@@ -433,6 +445,48 @@ void HelloTriangleApplication::createCommandBuffers(){
 
 			throw std::runtime_error("Failed to record command buffer!");
 		}
+	}
+}
+
+
+void HelloTriangleApplication::drawFrame() {
+
+	uint32_t imageIndex;
+
+	vkAcquireNextImageKHR(device, swapChain, UINT64_MAX, imageAvailableSemaphore, VK_NULL_HANDLE, &imageIndex);
+
+
+	VkSemaphore waitSemaphores[] = { imageAvailableSemaphore };
+	VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+	VkSemaphore signalSemaphores[] = { renderFinishedSemaphore };
+
+
+	VkSubmitInfo submitInfo{};
+	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	submitInfo.waitSemaphoreCount = 1;
+	submitInfo.pWaitSemaphores = waitSemaphores;
+	submitInfo.pWaitDstStageMask = waitStages;
+	submitInfo.commandBufferCount = 1;
+	submitInfo.pCommandBuffers = &commandBuffers[imageIndex];
+	submitInfo.signalSemaphoreCount = 1;
+	submitInfo.pSignalSemaphores = signalSemaphores;
+
+
+	if (vkQueueSubmit(graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE) != VK_SUCCESS) {
+
+		throw std::runtime_error("Failed to submit draw command buffer!");
+	}
+}
+
+
+void HelloTriangleApplication::createSemaphores(){
+
+	VkSemaphoreCreateInfo semaphoreInfo{};
+	semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+
+	if (vkCreateSemaphore(device, &semaphoreInfo, nullptr, &imageAvailableSemaphore) != VK_SUCCESS || vkCreateSemaphore(device, &semaphoreInfo, nullptr, &renderFinishedSemaphore) != VK_SUCCESS) {
+
+		throw std::runtime_error("Failed to create semapohores!");
 	}
 }
 
@@ -720,6 +774,7 @@ void HelloTriangleApplication::initVulkan() {
 	createFramebuffers();
 	createCommandPool();
 	createCommandBuffers();
+	createSemaphores();
 }
 
 
@@ -931,11 +986,15 @@ void HelloTriangleApplication::mainLoop() {
 
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
+		drawFrame();
 	}
 }
 
 
 void HelloTriangleApplication::cleanup() {
+
+	vkDestroySemaphore(device, imageAvailableSemaphore, nullptr);
+	vkDestroySemaphore(device, renderFinishedSemaphore, nullptr);
 
 	vkDestroyCommandPool(device, commandPool, nullptr);
 

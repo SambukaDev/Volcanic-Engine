@@ -26,6 +26,9 @@ private:
 	VkPipeline graphicsPipeline;
 	VkCommandPool commandPool;
 
+	VkSemaphore imageAvailableSemaphore;
+	VkSemaphore renderFinishedSemaphore;
+
 	const int WIDTH = 800;
 	const int HEIGHT = 600;
 
@@ -95,6 +98,10 @@ private:
 	void createCommandPool();
 
 	void createCommandBuffers();
+
+	void drawFrame();
+
+	void createSemaphores();
 
 	static VkResult CreateDebugUtilsMessengerEXT(VkInstance, const VkDebugUtilsMessengerCreateInfoEXT*, const VkAllocationCallbacks*, VkDebugUtilsMessengerEXT*);
 
