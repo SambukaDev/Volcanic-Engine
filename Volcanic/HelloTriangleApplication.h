@@ -28,6 +28,7 @@ private:
 	VkSemaphore imageAvailableSemaphore;
 	VkSemaphore renderFinishedSemaphore;
 	size_t currentFrame = 0;
+	bool framebufferResized = false;
 
 	const int WIDTH = 800;
 	const int HEIGHT = 600;
@@ -106,6 +107,12 @@ private:
 	void drawFrame();
 
 	void createSyncObjects();
+
+	void cleanupSwapChain();
+	
+	void recreateSwapChain();
+
+	static void framebufferResizeCallback(GLFWwindow* window, int width, int height);
 
 	static VkResult CreateDebugUtilsMessengerEXT(VkInstance, const VkDebugUtilsMessengerCreateInfoEXT*, const VkAllocationCallbacks*, VkDebugUtilsMessengerEXT*);
 
