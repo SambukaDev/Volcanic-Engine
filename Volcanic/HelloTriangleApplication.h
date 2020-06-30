@@ -4,6 +4,9 @@
 #include <vector>
 #include <optional>
 #include <string>
+#include <glm.hpp>
+#include <array>
+
 
 class HelloTriangleApplication{
 
@@ -29,6 +32,8 @@ private:
 	VkSemaphore renderFinishedSemaphore;
 	size_t currentFrame = 0;
 	bool framebufferResized = false;
+	VkBuffer vertexBuffer;
+	VkDeviceMemory vertexBufferMemory;
 
 	const int WIDTH = 800;
 	const int HEIGHT = 600;
@@ -48,6 +53,47 @@ private:
 	std::vector<VkSemaphore> renderFinishedSemaphores;
 	std::vector<VkFence> inFlightFences;
 	std::vector<VkFence> imagesInFlight;
+
+	struct Vertex {
+
+		glm::vec2 pos;
+		glm::vec3 color;
+
+		static VkVertexInputBindingDescription getBindingDescription() {
+
+			VkVertexInputBindingDescription bindingDescription{};
+			bindingDescription.binding = 0;
+			bindingDescription.stride = sizeof(Vertex);
+			bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+
+			return bindingDescription;
+		}
+
+		static std::array<VkVertexInputAttributeDescription, 2> getAttributeDescriptions() {
+
+			std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions{};
+
+			
+			attributeDescriptions[0].binding = 0;
+			attributeDescriptions[0].location = 0;
+			attributeDescriptions[0].format = VK_FORMAT_R32G32_SFLOAT;
+			attributeDescriptions[0].offset = offsetof(Vertex, pos);
+
+			attributeDescriptions[1].binding = 0;
+			attributeDescriptions[1].location = 1;
+			attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
+			attributeDescriptions[1].offset = offsetof(Vertex, color);
+
+
+			return attributeDescriptions;
+		}
+	};
+
+	const std::vector<Vertex> vertices = {
+		{{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
+		{{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
+		{{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}
+	};
 
 public:
 	HelloTriangleApplication();
@@ -111,6 +157,10 @@ private:
 	void cleanupSwapChain();
 	
 	void recreateSwapChain();
+
+	void createVertexBuffer();
+
+	uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 
 	static void framebufferResizeCallback(GLFWwindow* window, int width, int height);
 
