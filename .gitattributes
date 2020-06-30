@@ -30,5 +30,3 @@
 *.exe   binary
 *.out   binary
 *.app   binary
-*.ipch filter=lfs diff=lfs merge=lfs -text
-*.vs filter=lfs diff=lfs merge=lfs -text
