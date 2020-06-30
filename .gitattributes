@@ -1,5 +1,4 @@
 *.html linguist-detectable=false
-
 # Sources
 *.c     text diff=c
 *.cc    text diff=cpp
@@ -10,29 +9,26 @@
 *.h     text diff=c
 *.h++   text diff=cpp
 *.hh    text diff=cpp
-
 # Compiled Object files
 *.slo   binary
 *.lo    binary
 *.o     binary
 *.obj   binary
-
 # Precompiled Headers
 *.gch   binary
 *.pch   binary
-
 # Compiled Dynamic libraries
 *.so    binary
 *.dylib binary
 *.dll   binary
-
 # Compiled Static libraries
 *.lai   binary
 *.la    binary
 *.a     binary
 *.lib   binary
-
 # Executables
 *.exe   binary
 *.out   binary
 *.app   binary
+*.ipch filter=lfs diff=lfs merge=lfs -text
+*.vs filter=lfs diff=lfs merge=lfs -text
