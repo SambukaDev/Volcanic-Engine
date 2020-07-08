@@ -1,5 +1,7 @@
 #pragma once
 #define GLFW_INCLUDE_VULKAN
+#define GLM_FORCE_RADIANS
+#define GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
 #include <GLFW/glfw3.h>
 #include <vector>
 #include <optional>
@@ -25,6 +27,7 @@ private:
 	VkExtent2D swapChainExtent;
 	std::vector<VkImageView> swapChainImageViews;
 	VkRenderPass renderPass;
+	VkDescriptorSetLayout descriptorSetLayout;
 	VkPipelineLayout pipelineLayout;
 	VkPipeline graphicsPipeline;
 	VkCommandPool drawCommandPool;
@@ -37,6 +40,7 @@ private:
 	VkDeviceMemory vertexBufferMemory;
 	VkBuffer indexBuffer;
 	VkDeviceMemory indexBufferMemory;
+	VkDescriptorPool descriptorPool;
 
 
 	const int WIDTH = 800;
@@ -57,6 +61,10 @@ private:
 	std::vector<VkSemaphore> renderFinishedSemaphores;
 	std::vector<VkFence> inFlightFences;
 	std::vector<VkFence> imagesInFlight;
+	std::vector<VkBuffer> uniformBuffers;
+	std::vector<VkDeviceMemory> uniformBuffersMemory;
+	std::vector<VkDescriptorSet> descriptorSets;
+
 
 	struct Vertex {
 
@@ -103,6 +111,13 @@ private:
 
 	const std::vector<uint16_t> indices = {
 		0, 1, 2, 2, 3, 0
+	};
+
+
+	struct UniformBufferObject {
+		alignas(16) glm::mat4 model;
+		alignas(16) glm::mat4 view;
+		alignas(16) glm::mat4 proj;
 	};
 
 public:
@@ -175,6 +190,16 @@ private:
 	void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 
 	void createIndexBuffer();
+
+	void createDescriptorSetLayout();
+
+	void createUniformBuffers();
+
+	void updateUniformBuffer(uint32_t currentImage);
+
+	void createDescriptorPool();
+
+	void createDescriptorSets();
 
 	uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 
