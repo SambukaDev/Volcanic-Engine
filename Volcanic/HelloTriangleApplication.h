@@ -1,5 +1,7 @@
 #pragma once
 #define GLFW_INCLUDE_VULKAN
+#define GLM_FORCE_RADIANS
+#define GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
 #include <GLFW/glfw3.h>
 #include <vector>
 #include <optional>
@@ -38,6 +40,7 @@ private:
 	VkDeviceMemory vertexBufferMemory;
 	VkBuffer indexBuffer;
 	VkDeviceMemory indexBufferMemory;
+	VkDescriptorPool descriptorPool;
 
 
 	const int WIDTH = 800;
@@ -60,6 +63,7 @@ private:
 	std::vector<VkFence> imagesInFlight;
 	std::vector<VkBuffer> uniformBuffers;
 	std::vector<VkDeviceMemory> uniformBuffersMemory;
+	std::vector<VkDescriptorSet> descriptorSets;
 
 
 	struct Vertex {
@@ -111,9 +115,9 @@ private:
 
 
 	struct UniformBufferObject {
-		glm::mat4 model;
-		glm::mat4 view;
-		glm::mat4 proj;
+		alignas(16) glm::mat4 model;
+		alignas(16) glm::mat4 view;
+		alignas(16) glm::mat4 proj;
 	};
 
 public:
@@ -192,6 +196,10 @@ private:
 	void createUniformBuffers();
 
 	void updateUniformBuffer(uint32_t currentImage);
+
+	void createDescriptorPool();
+
+	void createDescriptorSets();
 
 	uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 
