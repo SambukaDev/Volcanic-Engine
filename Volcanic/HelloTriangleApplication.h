@@ -3,6 +3,7 @@
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
+#define GLM_ENABLE_EXPERIMENTAL
 
 #include <GLFW/glfw3.h>
 #include <vector>
@@ -10,6 +11,8 @@
 #include <string>
 #include <glm.hpp>
 #include <array>
+#include <gtx/hash.hpp>
+
 
 
 class HelloTriangleApplication{
@@ -55,6 +58,9 @@ private:
 	const int WIDTH = 800;
 	const int HEIGHT = 600;
 
+	const std::string MODEL_PATH = "Models/viking_room.obj";
+	const std::string TEXTURE_PATH = "Textures/viking_room.png";
+
 
 #ifdef NDEBUG
 	const bool enableValidationLayers = false;
@@ -62,18 +68,7 @@ private:
 	const bool enableValidationLayers = true;
 #endif
 
-	const std::vector<const char*> validationLayers = { "VK_LAYER_LUNARG_standard_validation" };
-	const std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
-	std::vector<VkFramebuffer> swapChainFramebuffers;
-	std::vector<VkCommandBuffer> commandBuffers;
-	std::vector<VkSemaphore> imageAvailableSemaphores;
-	std::vector<VkSemaphore> renderFinishedSemaphores;
-	std::vector<VkFence> inFlightFences;
-	std::vector<VkFence> imagesInFlight;
-	std::vector<VkBuffer> uniformBuffers;
-	std::vector<VkDeviceMemory> uniformBuffersMemory;
-	std::vector<VkDescriptorSet> descriptorSets;
-
+public:
 
 	struct Vertex {
 
@@ -114,25 +109,30 @@ private:
 
 			return attributeDescriptions;
 		}
-	};
 
-	const std::vector<Vertex> vertices = {
-		{{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-		{{0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
-		{{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
-		{{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
+		bool operator==(const Vertex& other) const {
 
-		{{-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-		{{0.5f, -0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
-		{{0.5f, 0.5f, -0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
-		{{-0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}}
+			return pos == other.pos && color == other.color && texCoord == other.texCoord;
+		}
 	};
 
 
-	const std::vector<uint16_t> indices = {
-		0, 1, 2, 2, 3, 0,
-		4, 5, 6, 6, 7, 4
-	};
+private:
+
+	const std::vector<const char*> validationLayers = { "VK_LAYER_LUNARG_standard_validation" };
+	const std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+	std::vector<VkFramebuffer> swapChainFramebuffers;
+	std::vector<VkCommandBuffer> commandBuffers;
+	std::vector<VkSemaphore> imageAvailableSemaphores;
+	std::vector<VkSemaphore> renderFinishedSemaphores;
+	std::vector<VkFence> inFlightFences;
+	std::vector<VkFence> imagesInFlight;
+	std::vector<VkBuffer> uniformBuffers;
+	std::vector<VkDeviceMemory> uniformBuffersMemory;
+	std::vector<VkDescriptorSet> descriptorSets;
+	std::vector<Vertex> vertices;
+	std::vector<uint32_t> indices;
+
 
 
 	struct UniformBufferObject {
@@ -250,6 +250,8 @@ private:
 
 	bool hasStencilComponent(VkFormat format);
 
+	void loadModel();
+
 	static void framebufferResizeCallback(GLFWwindow* window, int width, int height);
 
 	static VkResult CreateDebugUtilsMessengerEXT(VkInstance, const VkDebugUtilsMessengerCreateInfoEXT*, const VkAllocationCallbacks*, VkDebugUtilsMessengerEXT*);
@@ -285,4 +287,13 @@ private:
 	void cleanup();
 
 };
+
+
+namespace std {
+	template<> struct hash<HelloTriangleApplication::Vertex> {
+		size_t operator()(HelloTriangleApplication::Vertex const& vertex) const {
+			return ((hash<glm::vec3>()(vertex.pos) ^ (hash<glm::vec3>()(vertex.color) << 1)) >> 1) ^ (hash<glm::vec2>()(vertex.texCoord) << 1);
+		}
+	};
+}
 
